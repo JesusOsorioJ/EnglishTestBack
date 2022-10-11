@@ -4,7 +4,7 @@ const {
     handlerSingleBySubtittle,
     handlerCreateBySubtittle,
     handlerSearchTestBySubtittle
-} = require('./controller');
+} = require('./controller')
 
 const router = Router();
 
