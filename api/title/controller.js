@@ -31,22 +31,19 @@ async function handlerCreateBySubtittle(req, res) {
   
     
     const {id, test, score} = req.body;
-    console.log("id, test, score",id,test, score)
     const titleses = await titlesEvaluation.find({subtitle:id});
-    console.log("titleses.length",titleses.length)
+    
     if (titleses.length == 0){
       const titleses = await 
-      titlesEvaluation.create({subtitle:id, result:[{test:test.join(),score:score, try:1}]});
+      titlesEvaluation.create({subtitle:id, result:{[test.join()]:{score:score, try:1}}});
     }else{
-      const sdas = (titleses[0]).result.filter((index)=>{return index.test==test.join()})
-      if (sdas.length == 0){
-        const cxcxmc = {result:[...(titleses[0].result),{test:test.join(),score:score, try:1}]}
+      const sdas = (titleses[0]).result[test.join()]
+      if (!sdas){
+        const cxcxmc = {result:{...(titleses[0].result),[test.join()]:{score:score, try:1}}}
         await titlesEvaluation.findOneAndUpdate({subtitle:id}, cxcxmc)
       }else{
-        const sda =sdas[0]
-        const sdaaasd = (titleses[0]).result.filter((index)=>{return !(index.test == test.join())})
         await titlesEvaluation.findOneAndUpdate({subtitle:id}, 
-          {result: [...sdaaasd,{test:sda.test,score:score, try : (sda.try + 1)}]}) 
+          {result: {...(titleses[0]).result,[test.join()]:{score:score, try : (sdas.try + 1)}}}) 
         // await titlesEvaluation.findOneAndUpdate({subtitle:id}, 
         //   {result: [...sdaaasd,{test:sda.test,score:
         //     (sda.score*sda.try+score)/(sda.try+1), try : (sda.try + 1)}]}) 
